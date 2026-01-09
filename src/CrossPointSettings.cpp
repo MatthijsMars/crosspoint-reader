@@ -12,7 +12,7 @@
 CrossPointSettings CrossPointSettings::instance;
 
 namespace {
-constexpr uint8_t SETTINGS_FILE_VERSION = 1;
+constexpr uint8_t SETTINGS_FILE_VERSION = 2;
 // Increment this when adding new persisted settings fields
 constexpr uint8_t SETTINGS_COUNT = 19;
 constexpr char SETTINGS_FILE[] = "/.crosspoint/settings.bin";
@@ -62,7 +62,7 @@ bool CrossPointSettings::loadFromFile() {
 
   uint8_t version;
   serialization::readPod(inputFile, version);
-  if (version != SETTINGS_FILE_VERSION) {
+  if (version != SETTINGS_FILE_VERSION && version != 1) {
     Serial.printf("[%lu] [CPS] Deserialization failed: Unknown version %u\n", millis(), version);
     inputFile.close();
     return false;
@@ -112,7 +112,13 @@ bool CrossPointSettings::loadFromFile() {
     }
     serialization::readPod(inputFile, textAntiAliasing);
     if (++settingsRead >= fileSettingsCount) break;
-    serialization::readPod(inputFile, readingSpeedWpm);
+    if (version == 1) {
+      uint8_t wpmV1;
+      serialization::readPod(inputFile, wpmV1);
+      readingSpeedWpm = wpmV1;
+    } else {
+      serialization::readPod(inputFile, readingSpeedWpm);
+    }
     if (++settingsRead >= fileSettingsCount) break;
     serialization::readPod(inputFile, showTimeLeftInChapter);
   } while (false);
