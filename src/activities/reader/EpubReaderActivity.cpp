@@ -27,21 +27,8 @@ std::string formatMinutes(const float minutes) {
     return "";
   }
 
-  const int totalMinutes = static_cast<int>(std::ceil(minutes));
-  if (totalMinutes < 60) {
-    return std::to_string(totalMinutes) + "m";
-  }
-
-  const int hours = totalMinutes / 60;
-  const int mins = totalMinutes % 60;
-
-  char buffer[12];
-  if (mins == 0) {
-    std::snprintf(buffer, sizeof(buffer), "%dh", hours);
-  } else {
-    std::snprintf(buffer, sizeof(buffer), "%dh %02dm", hours, mins);
-  }
-  return std::string(buffer);
+  const int totalMinutes = static_cast<int>(std::floor(minutes));
+  return std::to_string(totalMinutes) + "m";
 }
 }  // namespace
 
@@ -453,6 +440,8 @@ void EpubReaderActivity::renderStatusBar(const int orientedMarginRight, const in
     // Calculate progress in book
     const float sectionChapterProg = static_cast<float>(section->currentPage) / section->pageCount;
     std::string timeLeftText;
+    const uint8_t bookProgress = epub->calculateProgress(currentSpineIndex, sectionChapterProg);
+
     if (SETTINGS.showTimeLeftInChapter && SETTINGS.readingSpeedWpm > 0) {
       const uint32_t wordsLeft = section->getWordsLeftFrom(section->currentPage);
       if (wordsLeft > 0) {
@@ -461,12 +450,10 @@ void EpubReaderActivity::renderStatusBar(const int orientedMarginRight, const in
         timeLeftText = formatMinutes(minutesLeft);
       }
     }
-    const uint8_t bookProgress = epub->calculateProgress(currentSpineIndex, sectionChapterProg);
-
     // Right aligned text for progress counter
-    const std::string progress = std::to_string(section->currentPage + 1) + "/" + std::to_string(section->pageCount) +
-                                 "  " + std::to_string(bookProgress) + "%" +
-                                 (timeLeftText.empty() ? std::string() : "  " + timeLeftText + " left");
+    const std::string progress = (timeLeftText.empty() ? std::string() : timeLeftText + "  ") +
+                                 std::to_string(section->currentPage + 1) + "/" + std::to_string(section->pageCount) +
+                                 "  " + std::to_string(bookProgress) + "%";
     progressTextWidth = renderer.getTextWidth(SMALL_FONT_ID, progress.c_str());
     renderer.drawText(SMALL_FONT_ID, renderer.getScreenWidth() - orientedMarginRight - progressTextWidth, textY,
                       progress.c_str());
