@@ -456,13 +456,12 @@ void EpubReaderActivity::renderStatusBar(const int orientedMarginRight, const in
     if (SETTINGS.showTimeLeftInChapter && SETTINGS.readingSpeedWpm > 0) {
       const uint32_t wordsLeft = section->getWordsLeftFrom(section->currentPage);
       if (wordsLeft > 0) {
-        const float minutesLeft = static_cast<float>(wordsLeft) /
-                                  static_cast<float>(std::max<uint8_t>(1, SETTINGS.readingSpeedWpm));
+        const float minutesLeft =
+            static_cast<float>(wordsLeft) / static_cast<float>(std::max<uint8_t>(1, SETTINGS.readingSpeedWpm));
         timeLeftText = formatMinutes(minutesLeft);
       }
     }
     const uint8_t bookProgress = epub->calculateProgress(currentSpineIndex, sectionChapterProg);
-
 
     // Right aligned text for progress counter
     const std::string progress = std::to_string(section->currentPage + 1) + "/" + std::to_string(section->pageCount) +
