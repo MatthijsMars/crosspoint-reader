@@ -34,10 +34,9 @@ void Page::render(GfxRenderer& renderer, const int fontId, const int xOffset, co
 size_t Page::wordCount() const {
   size_t count = 0;
   for (const auto& element : elements) {
-    const auto* line = dynamic_cast<PageLine*>(element.get());
-    if (line) {
-      count += line->wordCount();
-    }
+    // Only PageLine is stored in elements; avoid RTTI to stay compatible with -fno-rtti
+    const auto* line = static_cast<PageLine*>(element.get());
+    count += line->wordCount();
   }
   return count;
 }

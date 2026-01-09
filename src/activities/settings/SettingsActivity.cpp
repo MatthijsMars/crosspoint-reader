@@ -35,7 +35,7 @@ const SettingInfo settingsList[settingsCount] = {
     SettingInfo::Value("Reader Screen Margin", &CrossPointSettings::screenMargin, {5, 40, 5}),
     SettingInfo::Enum("Reader Paragraph Alignment", &CrossPointSettings::paragraphAlignment,
                       {"Justify", "Left", "Center", "Right"}),
-    SettingInfo::Value("Reading Speed (WPM)", &CrossPointSettings::readingSpeedWpm, {80, 240, 10}),
+    SettingInfo::Value("Reading Speed (WPM)", &CrossPointSettings::readingSpeedWpm, {150, 300, 10}),
     SettingInfo::Toggle("Show Time Left", &CrossPointSettings::showTimeLeftInChapter),
     SettingInfo::Enum("Time to Sleep", &CrossPointSettings::sleepTimeout,
                       {"1 min", "5 min", "10 min", "15 min", "30 min"}),
